@@ -9,13 +9,16 @@ from TOKEN import TOKEN
 
 # Configuration
 DISCORD_TOKEN = TOKEN  # Replace with your bot token
-CHANNEL_ID = YOURCHANNELIDHERE # Replace with your channel ID for auto-updates
-API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOURSERVERIPHERE:YOURSERVERPORTHERE"
+CHANNEL_ID =  YOURIDHERE # Replace with your channel ID for auto-updates
+API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOURIPHERE:YOURPORTHERE"
 
 # Intents
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+# Variable to store the message to edit
+status_message = None
 
 async def fetch_server_status():
     """Fetches server status from API"""
@@ -151,7 +154,7 @@ def create_status_embed(data):
         embed.description = "❌ Unable to retrieve server information"
         embed.color = discord.Color.red()
     
-    embed.set_footer(text="AstroLauncher Status Bot • Updated")
+    embed.set_footer(text="AstroLauncher Status Bot • Made with ❤️ for the Astroneer community ")
     return embed
 
 @bot.event
@@ -170,7 +173,7 @@ async def on_ready():
     
     # Start automatic status updates
     update_status.start()
-    print("✅ Automatic status updates started (every 5 minutes)")
+    print("✅ Automatic status updates started (every 1 minute)")
 
 @bot.tree.command(name="ask", description="Display the current Astroneer server status")
 async def ask_command(interaction: discord.Interaction):
@@ -269,9 +272,38 @@ async def stats_command(interaction: discord.Interaction):
     else:
         await interaction.followup.send("❌ Unable to retrieve global statistics")
 
-@tasks.loop(minutes=5)
+@bot.tree.command(name="start_monitor", description="Start automatic status monitoring in this channel")
+async def start_monitor_command(interaction: discord.Interaction):
+    """Command to start monitoring in the current channel"""
+    global status_message, CHANNEL_ID
+    
+    await interaction.response.defer(thinking=True)
+    
+    CHANNEL_ID = interaction.channel_id
+    
+    data, error = await fetch_server_status()
+    
+    if error:
+        await interaction.followup.send(f"❌ Error: {error}")
+        return
+    
+    embed = create_status_embed(data)
+    
+    # Send initial message
+    msg = await interaction.followup.send(embed=embed)
+    status_message = msg
+    
+    # Restart the update task
+    if not update_status.is_running():
+        update_status.start()
+    
+    await interaction.channel.send("✅ Automatic monitoring started in this channel! Updates every minute.")
+
+@tasks.loop(minutes=1)
 async def update_status():
-    """Automatically update status every 5 minutes"""
+    """Automatically update status every 1 minute by editing the last message"""
+    global status_message
+    
     channel = bot.get_channel(CHANNEL_ID)
     if not channel:
         print("⚠️ Channel not found for auto-updates")
@@ -286,10 +318,27 @@ async def update_status():
     embed = create_status_embed(data)
     
     try:
-        await channel.send(embed=embed)
-        print(f"✅ Status update sent to channel {CHANNEL_ID}")
+        if status_message is None:
+            # If no message exists, send a new one
+            status_message = await channel.send(embed=embed)
+            print(f"✅ Initial status message sent to channel {CHANNEL_ID}")
+        else:
+            # Try to edit the existing message
+            try:
+                await status_message.edit(embed=embed)
+                print(f"✅ Status message updated in channel {CHANNEL_ID}")
+            except discord.NotFound:
+                # If the message was deleted, send a new one
+                print("⚠️ Previous message was deleted, sending a new one")
+                status_message = await channel.send(embed=embed)
+            except discord.Forbidden:
+                print("❌ Bot doesn't have permission to edit messages")
+            except Exception as e:
+                print(f"❌ Error editing message: {e}")
+                # Try to send a new message if editing fails
+                status_message = await channel.send(embed=embed)
     except Exception as e:
-        print(f"❌ Error sending update: {e}")
+        print(f"❌ Error sending/editing update: {e}")
 
 @update_status.before_loop
 async def before_update_status():
