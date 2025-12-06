@@ -28,7 +28,7 @@ A Discord bot that monitors and displays the status of your Astroneer dedicated 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Astroserver-Status-discord-bot.git
+git clone https://github.com/Quentins404/Astroserver-Status-discord-bot.git
 cd Astroserver-Status-discord-bot
 ```
 
