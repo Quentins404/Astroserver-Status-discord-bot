@@ -8,7 +8,7 @@ import certifi
 from TOKEN import TOKEN
 
 # Configuration
-DISCORD_TOKEN = TOKEN  # Replace with your bot token
+DISCORD_TOKEN = TOKEN
 CHANNEL_ID =  YOURIDHERE # Replace with your channel ID for auto-updates
 API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOURIPHERE:YOURPORTHERE"
 
