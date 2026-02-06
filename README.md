@@ -113,7 +113,7 @@ API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOURSERVERIPHERE:Y
 Replace `YOUR_SERVER_IP:PORT` with your server's address:
 ```python
 # Example:
-API_URL = "https://astroservercheck.joejoetv.de/api/check?url=192.168.0.1:7777"
+API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOUR_SERVER_IP:PORT"
 ```
 
 ## 🚀 Usage
