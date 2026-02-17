@@ -96,7 +96,7 @@ Open `main.py` and modify these lines:
 CHANNEL_ID = 1234567890  # Replace with your Discord channel ID
 
 # Line 13: Add your Astroneer server address
-API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOURSERVERIPHERE:YOURSERVERPORTHERE"
+API_URL = "https://astroservercheck.joejoetv.de/api/check?url=IP:PORT"
 
 ```
 
@@ -110,10 +110,10 @@ API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOURSERVERIPHERE:Y
 
 #### How to format your server URL:
 
-Replace `YOUR_SERVER_IP:PORT` with your server's address:
+Replace `IP:PORT` with your server's address:
 ```python
 # Example:
-API_URL = "https://astroservercheck.joejoetv.de/api/check?url=YOUR_SERVER_IP:PORT"
+API_URL = "https://astroservercheck.joejoetv.de/api/check?url=IP:PORT"
 ```
 
 ## 🚀 Usage
@@ -237,4 +237,4 @@ If you have any questions or issues, please open an issue on GitHub.
 
 ---
 
-Made with ❤️ for the Astroneer community
+Made with ❤️ for the Astroneer community by @Quentins404 & @JoeJoeTV
